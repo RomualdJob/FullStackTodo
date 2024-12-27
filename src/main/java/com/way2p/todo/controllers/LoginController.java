@@ -2,7 +2,7 @@ package com.way2p.todo.controllers;
 
 import com.way2p.todo.dto.LoginRequest;
 import com.way2p.todo.dto.LoginResponse;
-import com.way2p.todo.services.jwt.CustomerServiceImpl;
+import com.way2p.todo.services.jwt.UserDetailsServiceImpl;
 import com.way2p.todo.utils.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,13 +21,13 @@ import org.springframework.web.bind.annotation.*;
 public class LoginController {
 
     private final AuthenticationManager authenticationManager;
-    private final CustomerServiceImpl customerService;
+    private final UserDetailsServiceImpl customerService;
     private final JwtUtil jwtUtil;
 
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @Autowired
-    public LoginController(AuthenticationManager authenticationManager, CustomerServiceImpl customerService, JwtUtil jwtUtil) {
+    public LoginController(AuthenticationManager authenticationManager, UserDetailsServiceImpl customerService, JwtUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
         this.customerService = customerService;
         this.jwtUtil = jwtUtil;

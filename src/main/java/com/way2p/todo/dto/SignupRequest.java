@@ -5,11 +5,21 @@ public class SignupRequest {
     private String email;
     private String name;
     private String password;
+    private String roleName; // Ajoutez ce champ pour spécifier le rôle
 
     public String getEmail() {
         return email;
     }
 
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+
+    public String getRoleName() {
+        return roleName;
+    }
     public void setEmail(String email) {
         this.email = email;
     }

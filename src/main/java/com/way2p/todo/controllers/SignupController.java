@@ -21,15 +21,16 @@ public class SignupController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, String>> signupCustomer(@RequestBody SignupRequest signupRequest) {
-        boolean isUserCreated = authService.createCustomer(signupRequest);
-
+    public ResponseEntity<Map<String, String>> signupUser(@RequestBody SignupRequest signupRequest) {
         Map<String, String> response = new HashMap<>();
+        boolean isUserCreated = authService.createUser(signupRequest);
+
         if (isUserCreated) {
-            response.put("message", "Customer created successfully");
+            response.put("message", "User created successfully");
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } else {
-            response.put("message", "Failed to create customer");
+            // Si l'utilisateur existe déjà, retourner un message spécifique
+            response.put("message", "Utilisateur existe déjà");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }

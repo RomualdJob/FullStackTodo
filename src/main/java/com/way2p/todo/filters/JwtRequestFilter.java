@@ -1,6 +1,6 @@
 package com.way2p.todo.filters;
 
-import com.way2p.todo.services.jwt.CustomerServiceImpl;
+import com.way2p.todo.services.jwt.UserDetailsServiceImpl;
 import com.way2p.todo.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,11 +20,11 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
-    private final CustomerServiceImpl customerService;
+    private final UserDetailsServiceImpl customerService;
     private final JwtUtil jwtUtil;
 
     @Autowired
-    public JwtRequestFilter(CustomerServiceImpl customerService, JwtUtil jwtUtil) {
+    public JwtRequestFilter(UserDetailsServiceImpl customerService, JwtUtil jwtUtil) {
         this.customerService = customerService;
         this.jwtUtil = jwtUtil;
     }
