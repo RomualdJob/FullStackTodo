@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -26,9 +28,16 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean createUser(SignupRequest signupRequest) {
-        // Vérifier si l'utilisateur existe déjà
-        if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            return false;  // Utilisateur existe déjà
+        // Vérifier si l'utilisateur existe déjà par son email
+        Optional<User> existingUserByEmail = userRepository.findByEmail(signupRequest.getEmail());
+        if (existingUserByEmail.isPresent()) {
+            return false;  // Utilisateur existe déjà par email
+        }
+
+        // Vérifier si l'utilisateur existe déjà par son nom
+        Optional<User> existingUserByName = userRepository.findByName(signupRequest.getName());
+        if (existingUserByName.isPresent()) {
+            return false;  // Utilisateur existe déjà par nom
         }
 
         // Créer un nouvel utilisateur

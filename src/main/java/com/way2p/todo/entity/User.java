@@ -10,20 +10,51 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    private String name;  // Ajout du champ "name"
     private String email;
     private String password;
 
-    // Relation Many-to-Many avec l'entité Role
+    // Relations Many-to-Many, One-to-Many (comme avant)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "user_roles", // Nom de la table de jointure
-            joinColumns = @JoinColumn(name = "user_id"),  // Clé étrangère pour User
-            inverseJoinColumns = @JoinColumn(name = "role_id") // Clé étrangère pour Role
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_competences",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "competence_id")
+    )
+    private Set<Competence> competences = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Set<Evaluation> evaluations = new HashSet<>();
+
     // Getters et setters
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    // Autres getters et setters...
+
+
+// Getters et setters
+    public Set<Competence> getCompetences() {
+        return competences;
+    }
+
+    public void setCompetences(Set<Competence> competences) {
+        this.competences = competences;
+    }
+
     public Set<Role> getRoles() {
         return roles;
     }
@@ -54,5 +85,13 @@ public class User {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Set<Evaluation> getEvaluations() {
+        return evaluations;
+    }
+
+    public void setEvaluations(Set<Evaluation> evaluations) {
+        this.evaluations = evaluations;
     }
 }

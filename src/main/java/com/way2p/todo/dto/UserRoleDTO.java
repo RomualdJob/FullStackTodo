@@ -1,30 +1,19 @@
 package com.way2p.todo.dto;
 
-import java.util.HashSet;
 import java.util.Set;
 
-public class RoleDTO {
-
+public class UserRoleDTO {
     private Long id;
-    private String roleName;
+    private String name;
     private String email;
-    private Set<String> userNames = new HashSet<>(); // Contiendra les noms des utilisateurs associés au rôle
-
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    private Set<String> roles;  // Un Set de String pour stocker les noms des rôles
 
     // Constructeur
-    public RoleDTO(Long id, String roleName, String email,Set<String> userNames) {
+    public UserRoleDTO(Long id, String name, String email, Set<String> roles) {
         this.id = id;
-        this.roleName = roleName;
-        this.email=email;
-        this.userNames = userNames;
+        this.name = name;
+        this.email = email;
+        this.roles = roles;
     }
 
     // Getters et setters
@@ -36,19 +25,27 @@ public class RoleDTO {
         this.id = id;
     }
 
-    public String getRoleName() {
-        return roleName;
+    public String getName() {
+        return name;
     }
 
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Set<String> getUserNames() {
-        return userNames;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUserNames(Set<String> userNames) {
-        this.userNames = userNames;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
     }
 }

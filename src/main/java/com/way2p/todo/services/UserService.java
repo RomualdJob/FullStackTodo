@@ -1,8 +1,9 @@
-package com.way2p.todo.services;
+package com.way2p.todo.service;
 
-import com.way2p.todo.dto.RoleDTO;
+import com.way2p.todo.entity.User;
+import com.way2p.todo.dto.UserRoleDTO;
 import com.way2p.todo.entity.Role;
-import com.way2p.todo.repositories.RoleRepository;
+import com.way2p.todo.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,32 +12,60 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class RoleService {
+public class UserService {
+
+    private final UserRepository userRepository;
+    private final RoleService roleService;
 
     @Autowired
-    private RoleRepository roleRepository;
-
-    // Méthode pour récupérer un rôle par son nom
-    public RoleDTO getRoleByName(String roleName) {
-        Role role = roleRepository.findByRoleName(roleName)
-                .orElseThrow(() -> new IllegalArgumentException("Role not found"));
-
-        // Crée un Set contenant uniquement les noms des utilisateurs associés au rôle
-        Set<String> userNames = role.getUsers().stream()
-                .map(user -> user.getName())  // On récupère le nom des utilisateurs associés
-                .collect(Collectors.toSet());
-
-        return new RoleDTO(role.getId(), role.getRoleName(), role.getUsers(),userNames);
+    public UserService(UserRepository userRepository, RoleService roleService) {
+        this.userRepository = userRepository;
+        this.roleService = roleService;
     }
 
-    // Méthode pour récupérer tous les rôles avec leurs utilisateurs
-    public List<RoleDTO> getRolesWithUsers() {
-        List<Role> roles = roleRepository.findAll();
-        return roles.stream().map(role -> {
-            Set<String> userNames = role.getUsers().stream()
-                    .map(user -> user.getName())
-                    .collect(Collectors.toSet());
-            return new RoleDTO(role.getId(), role.getRoleName(), userNames);
-        }).collect(Collectors.toList());
+    // Récupérer tous les utilisateurs avec leurs rôles sous forme de UserRoleDTO
+    public List<UserRoleDTO> getAllUsersWithRoles() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(user -> new UserRoleDTO(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getRoles().stream()
+                                .map(Role::getRoleName) // On récupère le nom du rôle
+                                .collect(Collectors.toSet())))
+                .collect(Collectors.toList());
+    }
+
+    // Trouver un utilisateur par son email et récupérer ses rôles sous forme de UserRoleDTO
+    public UserRoleDTO getUserWithRolesByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        return new UserRoleDTO(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRoles().stream()
+                        .map(Role::getRoleName) // On récupère le nom du rôle
+                        .collect(Collectors.toSet()));
+    }
+
+    // Ajouter un rôle à un utilisateur
+    public void addRoleToUser(Long userId, String roleName) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        Role role = roleService.getRoleByName(roleName);
+        user.getRoles().add(role);
+        userRepository.save(user);
+    }
+
+    // Supprimer un rôle d'un utilisateur
+    public void removeRoleFromUser(Long userId, String roleName) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        Role role = roleService.getRoleByName(roleName);
+        user.getRoles().remove(role);
+        userRepository.save(user);
     }
 }
