@@ -5,12 +5,16 @@ import com.way2p.todo.entity.Role;
 import com.way2p.todo.entity.User;
 import com.way2p.todo.repositories.RoleRepository;
 import com.way2p.todo.repositories.UserRepository;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -48,23 +52,39 @@ public class AuthServiceImpl implements AuthService {
         String hashPassword = passwordEncoder.encode(signupRequest.getPassword());
         user.setPassword(hashPassword);
 
-        // Récupérer le rôle fourni ou utiliser un rôle par défaut (USER)
-        Role userRole;
-        if (signupRequest.getRoleName() != null && !signupRequest.getRoleName().isEmpty()) {
-            // Si un rôle est fourni, on cherche ce rôle dans la base de données
-            userRole = roleRepository.findByRoleName(signupRequest.getRoleName())
-                    .orElseThrow(() -> new RuntimeException("Role " + signupRequest.getRoleName() + " not found"));
-        } else {
-            // Si aucun rôle n'est fourni, on assigne le rôle par défaut USER
-            userRole = roleRepository.findByRoleName("USER")
-                    .orElseThrow(() -> new RuntimeException("Default role USER not found"));
-        }
+        // Récupérer les rôles valides pour cet utilisateur
+        Set<Role> roles = getValidRoles(signupRequest.getRoleNames());
 
-        // Assigner le rôle à l'utilisateur
-        user.getRoles().add(userRole);
+        // Assigner les rôles à l'utilisateur
+        user.setRoles(roles);
 
         // Sauvegarder l'utilisateur
         userRepository.save(user);
         return true;  // Utilisateur créé avec succès
+    }
+
+    private Set<Role> getValidRoles(List<String> roleNames) {
+        Set<Role> roles = new HashSet<>();
+
+        // Si aucune liste de rôles n'est fournie, on assigne par défaut le rôle USER
+        if (roleNames == null || roleNames.isEmpty()) {
+            roleNames.add("USER");
+        }
+
+        for (String roleName : roleNames) {
+            // Vérifier que le rôle est valide (USER ou ADMIN)
+            if (!roleName.equals("USER") && !roleName.equals("ADMIN")) {
+                throw new IllegalArgumentException("Role not valid. Only 'USER' and 'ADMIN' are allowed.");
+            }
+
+            // Chercher le rôle dans la base de données
+            Role role = roleRepository.findByRoleName(roleName)
+                    .orElseThrow(() -> new RuntimeException("Role " + roleName + " not found"));
+
+            // Ajouter le rôle à l'ensemble
+            roles.add(role);
+        }
+
+        return roles;
     }
 }

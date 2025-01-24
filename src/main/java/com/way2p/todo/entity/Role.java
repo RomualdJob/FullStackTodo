@@ -1,5 +1,7 @@
 package com.way2p.todo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +14,7 @@ public class Role {
     private Long id;
 
     // Nom du rôle (par exemple, "USER", "ADMIN")
+    @JsonProperty("roles")
     private String roleName;
 
     // Constructeur sans argument requis par JPA
@@ -40,6 +43,7 @@ public class Role {
     }
 
     // Relation Many-to-Many avec l'entité User
+    @JsonIgnore
     @ManyToMany(mappedBy = "roles") // La relation est gérée par l'entité User
     private Set<User> users = new HashSet<>();
 

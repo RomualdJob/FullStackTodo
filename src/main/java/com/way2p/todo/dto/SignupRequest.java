@@ -1,25 +1,18 @@
 package com.way2p.todo.dto;
 
+import java.util.List;
+
 public class SignupRequest {
 
     private String email;
     private String name;
     private String password;
-    private String roleName; // Ajoutez ce champ pour spécifier le rôle
+    private List<String> roleNames; // Une liste de rôles
 
     public String getEmail() {
         return email;
     }
 
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-
-
-    public String getRoleName() {
-        return roleName;
-    }
     public void setEmail(String email) {
         this.email = email;
     }
@@ -39,4 +32,14 @@ public class SignupRequest {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public List<String> getRoleNames() {
+        return roleNames;
+    }
+
+    public void setRoleNames(List<String> roleNames) {
+        this.roleNames = roleNames;
+    }
+
+
 }

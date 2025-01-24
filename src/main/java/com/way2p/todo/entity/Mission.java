@@ -1,9 +1,14 @@
 package com.way2p.todo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")  // Ajout de l'identifiant unique
 public class Mission {
 
     @Id
@@ -19,6 +24,7 @@ public class Mission {
     // Relation Many-to-One avec l'entité User
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")  // La clé étrangère vers User
+    @JsonBackReference // Eviter la récursion en retour
     private User user;
 
     // Constructeurs, getters et setters
