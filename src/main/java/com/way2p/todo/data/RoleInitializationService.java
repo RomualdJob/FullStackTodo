@@ -20,9 +20,17 @@ public class RoleInitializationService {
     @PostConstruct
     public void initRoles() {
         // Créer les rôles si non existants
-        if (!roleRepository.existsByRoleName("USER")) {
+
+
+        if (!roleRepository.existsByRoleName("CLIENT")) {
             Role userRole = new Role();
-            userRole.setRoleName("USER");
+            userRole.setRoleName("CLIENT");
+            roleRepository.save(userRole);
+        }
+
+        if (!roleRepository.existsByRoleName("FREELANCER")) {
+            Role userRole = new Role();
+            userRole.setRoleName("FREELANCER");
             roleRepository.save(userRole);
         }
 
